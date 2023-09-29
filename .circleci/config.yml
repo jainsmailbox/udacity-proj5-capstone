@@ -42,15 +42,15 @@ jobs:
         command: |
                   . devops/bin/activate
                   make lint
-upload_docker:
+  upload_docker:
     docker:
       - image: cimg/go:1.17
     steps:
-      - checkout
-      - setup_remote_docker:
-      - run:
-          name: Build and upload docker image to docker hub container
-          command: |
+    - checkout
+    - setup_remote_docker:
+    - run:
+         name: Build and upload docker image to docker hub container
+         command: |
             image="udacity-proj5-capstone-aj"
             docker build --tag=$image .
             docker image ls
