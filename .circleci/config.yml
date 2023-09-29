@@ -60,7 +60,7 @@ jobs:
             docker tag "$image:latest" "${dockerpath}:latest"
             docker push "${dockerpath}:latest"
 
-  deploy:
+  deploy_docker_to_eks:
     docker:
       - image: amazon/aws-cli
     steps:
@@ -77,28 +77,10 @@ jobs:
           name: create new cluster
           command: |            
             kubeRegion="us-east-1"
-            image="capstone"
+            image="udacity-proj5-capstone-aj"
             dockerpath="$DOCKER_USERNAME/$image"
             
-            if eksctl create cluster --config-file=kubernetes/stack.yml
-            then
-              echo "creating new Stack"
-              aws eks update-kubeconfig --name $image --region $kubeRegion              
-              kubectl apply -f kubernetes/deploy.yml
-              kubectl apply -f kubernetes/service.yml
-
-              kubectl get deployments
-              kubectl get services
-            else
-              aws eks update-kubeconfig --name $image --region $kubeRegion
-              echo "update existing Stack"
-              kubectl get deployments
-              kubectl get services
-              kubectl get deploy,rs,svc,pods
-              kubectl set image deployment/$image capstone-app="$dockerpath:${CIRCLE_WORKFLOW_ID:0:7}"
-              kubectl get deployments
-              kubectl get rs
-            fi
+            
       
 
 
