@@ -47,7 +47,7 @@ jobs:
       - image: cimg/go:1.17
     steps:
     - checkout
-    - setup_remote_docker:
+    - setup_remote_docker
     - run:
          name: Build and upload docker image to docker hub container
          command: |
