@@ -5,7 +5,7 @@
 version: 2.1
 
 jobs:
-  build:
+  run_lint:
     docker:
     # Use the same Docker base as the project
     - image: python:3.7.3-stretch
@@ -45,6 +45,6 @@ jobs:
 
 workflows:
   version: 2.1
-  test_build:
+  default:
     jobs:
-      - build                  
+      - run_lint                  
