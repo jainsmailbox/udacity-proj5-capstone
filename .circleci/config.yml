@@ -57,9 +57,7 @@ jobs:
             
             dockerpath="$DOCKER_USERNAME/$image"
             docker login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD
-          # docker tag "$image" "${dockerpath}:${CIRCLE_WORKFLOW_ID:0:7}"
             docker tag "$image:latest" "${dockerpath}:latest"
-          # docker push "${dockerpath}:${CIRCLE_WORKFLOW_ID:0:7}"
             docker push "${dockerpath}:latest"
 
 
