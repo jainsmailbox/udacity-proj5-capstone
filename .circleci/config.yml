@@ -75,10 +75,6 @@ jobs:
             mv /tmp/eksctl /usr/local/bin
       - run:
           name: create new cluster
-          command: |            
-            kubeRegion="us-east-1"
-            image="udacity-proj5-capstone-aj"
-            dockerpath="$DOCKER_USERNAME/$image"
           command: |
             aws cloudformation --region us-east-1 list-exports > cluster.txt
             cat cluster.txt
