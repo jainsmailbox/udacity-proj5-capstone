@@ -67,5 +67,5 @@ workflows:
   default:
     jobs:
       - run_lint        
-      - upload_doker:
+      - upload_docker:
           requires: [run_lint]
