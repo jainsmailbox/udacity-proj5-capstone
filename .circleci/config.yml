@@ -61,66 +61,44 @@ jobs:
             docker push "${dockerpath}:latest"
 
   deploy_docker_to_eks:
-    #Image
     docker:
-      - image: python:3.7.3-stretch
-    # Checkout
+      - image: amazon/aws-cli
     steps:
       - checkout
       - run:
-          name: awscli Installation
+          name: Install dependancies
           command: |
-            # installing AWS CLI
-            pip3 install awscli
-      - run:
-          name: iam-authenticator Installation
-          command: |            
-            curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/aws-iam-authenticator
-            chmod +x ./aws-iam-authenticator
-            mv ./aws-iam-authenticator /usr/local/bin/aws-iam-authenticator
-            echo AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-            echo AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-            echo AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION
-            aws configure list
-         
-      - run:
-          name: kubectl Installation
-          command: |
-            curl -o kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/1.13.7/2019-06-11/bin/linux/amd64/kubectl
-            chmod +x ./kubectl
-            mv ./kubectl /usr/local/bin/kubectl
-           
-      - run:
-          name: eksctl Installation
-          command: |
+            yum install -y tar gzip
+            curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl
+            install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
             curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
             mv /tmp/eksctl /usr/local/bin
-           
       - run:
-          name: EKS cluster Creation
-          command: |
-            aws cloudformation --region us-east-1 list-exports > cluster.txt
-            cat cluster.txt
-            if [ $(grep -i "eksctl-capstoneproject" cluster.txt | wc -l) -ge 1 ]
-              then
-              echo "EKS Cluster already exists in environment"
-              else
-              echo "creating EKS Cluster"
-              eksctl create cluster --name eksctl-capstoneproject --version 1.23 --region us-east-1 --zones us-east-1a,us-east-1b,us-east-1c --nodegroup-name eksudanodegrp --node-type t2.small --nodes-min 2 --nodes-max 3 --managed
-            fi
+          name: create new cluster
+          command: |            
+            kubeRegion="us-east-1"
+            image="udacity-proj5-capstone-aj:latest"
+            dockerpath="jainsmailbox/udacity-proj5-capstone-aj:latest"
             
-      - run:
-          name: deploy the docker container in aws eks cluster
-          command: |
-            aws eks --region us-east-1 update-kubeconfig --name eksctl-capstoneproject
-            kubectl apply -f kubernetes/ajapp_deploy.yml
-            kubectl get nodes
-            kubectl get deployment
-            kubectl get pod -o wide
-            kubectl apply -f kubernetes/ajapp_loadbalancer.yml
-            kubectl get services
-             # kubectl rollout status deployments/capstoneproject
-            kubectl describe svc capstoneproject
+            if eksctl create cluster --config-file=kubernetes/stack.yml
+            then
+              echo "creating new Stack"
+              aws eks update-kubeconfig --name $image --region $kubeRegion              
+              kubectl apply -f kubernetes/ajdeploy.yml
+              kubectl apply -f kubernetes/ajapp_loadbalancer.yml
+
+              kubectl get deployments
+              kubectl get services
+            else
+              aws eks update-kubeconfig --name $image --region $kubeRegion
+              echo "update existing Stack"
+              kubectl get deployments
+              kubectl get services
+              kubectl get deploy,rs,svc,pods
+              kubectl set image deployment/$image capstone-app="$dockerpath"
+              kubectl get deployments
+              kubectl get rs
+            fi
 
 workflows:
   version: 2.1
