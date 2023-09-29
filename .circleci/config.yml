@@ -57,9 +57,9 @@ upload_docker:
             
             dockerpath="$DOCKER_USERNAME/$image"
             docker login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD
-            docker tag "$image" "${dockerpath}:${CIRCLE_WORKFLOW_ID:0:7}"
-            docker tag "$image" "${dockerpath}:latest"
-            docker push "${dockerpath}:${CIRCLE_WORKFLOW_ID:0:7}"
+          # docker tag "$image" "${dockerpath}:${CIRCLE_WORKFLOW_ID:0:7}"
+            docker tag "$image:latest" "${dockerpath}:latest"
+          # docker push "${dockerpath}:${CIRCLE_WORKFLOW_ID:0:7}"
             docker push "${dockerpath}:latest"
 
 
@@ -68,4 +68,6 @@ workflows:
   version: 2.1
   default:
     jobs:
-      - run_lint                  
+      - run_lint        
+      - upload_doker:
+          requires: [run_lint]
