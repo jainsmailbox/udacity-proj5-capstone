@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: udacity-proj5-capstone-aj
-        image:jainsmailbox/udacity-proj5-capstone-aj:latest
+        image: jainsmailbox/udacity-proj5-capstone-aj:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 80
