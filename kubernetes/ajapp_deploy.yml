@@ -21,4 +21,4 @@ spec:
         image: jainsmailbox/udacity-proj5-capstone-aj:latest
         imagePullPolicy: Always
         ports:
-        - containerPort: 80
+        - containerPort: 5000
