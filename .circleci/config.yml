@@ -97,7 +97,7 @@ jobs:
             kubectl apply -f kubernetes/ajapp_loadbalancer.yml
             kubectl get services
              # kubectl rollout status deployments/capstoneproject
-            kubectl describe svc udacity-proj5-capstone-aj      
+            kubectl describe svc capstoneproject
 
 
 workflows:
