@@ -91,3 +91,5 @@ workflows:
       - run_lint        
       - upload_docker:
           requires: [run_lint]
+      - deploy_docker_to_eks:
+          requires: [upload_docker]          
