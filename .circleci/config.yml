@@ -42,6 +42,27 @@ jobs:
         command: |
                   . devops/bin/activate
                   make lint
+upload_docker:
+    docker:
+      - image: cimg/go:1.17
+    steps:
+      - checkout
+      - setup_remote_docker:
+      - run:
+          name: Build and upload docker image to docker hub container
+          command: |
+            image="udacity-proj5-capstone-aj"
+            docker build --tag=$image .
+            docker image ls
+            
+            dockerpath="$DOCKER_USERNAME/$image"
+            docker login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD
+            docker tag "$image" "${dockerpath}:${CIRCLE_WORKFLOW_ID:0:7}"
+            docker tag "$image" "${dockerpath}:latest"
+            docker push "${dockerpath}:${CIRCLE_WORKFLOW_ID:0:7}"
+            docker push "${dockerpath}:latest"
+
+
 
 workflows:
   version: 2.1
