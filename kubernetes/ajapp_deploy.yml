@@ -1,12 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: udacity-proj5-capstone-aj
+  name: capstoneproject
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: udacity-proj5-capstone-aj
+      app: capstoneproject
   strategy:
     rollingUpdate:
       maxUnavailable: 1
@@ -14,10 +14,10 @@ spec:
   template:
     metadata:
       labels:
-        app: udacity-proj5-capstone-aj
+        app: capstoneproject
     spec:
       containers:
-      - name: udacity-proj5-capstone-aj
+      - name: capstoneproject
         image: jainsmailbox/udacity-proj5-capstone-aj:latest
         imagePullPolicy: Always
         ports:
