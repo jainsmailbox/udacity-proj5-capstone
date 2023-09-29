@@ -86,7 +86,18 @@ jobs:
               eksctl create cluster --name eksctl-capstoneproject --version 1.28 --region us-east-1 --zones us-east-1a,us-east-1b,us-east-1c --nodegroup-name eksudanodegrp --node-type t2.small --nodes-min 2 --nodes-max 4 --managed
             fi  
             
-      
+      - run:
+          name: deploy the docker container in aws eks cluster
+          command: |
+            aws eks --region us-east-1 update-kubeconfig --name eksctl-capstoneproject
+            kubectl apply -f kubernetes/ajapp_deploy.yml
+            kubectl get nodes
+            kubectl get deployment
+            kubectl get pod -o wide
+            kubectl apply -f kubernetes/ajapp_loadbalancer.yml
+            kubectl get services
+             # kubectl rollout status deployments/capstoneproject
+            kubectl describe svc udacity-proj5-capstone-aj      
 
 
 workflows:
